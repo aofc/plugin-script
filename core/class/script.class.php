@@ -401,5 +401,25 @@ class scriptCmd extends cmd {
 		}
 	}
 
+	public function executeDynamicList() {
+	    $request = $this->replaceTags($this->getConfiguration('request'));
+	
+	    // Construire la commande shell
+	    $cmd = 'sudo chmod +x ' . explode(' ', $request)[0] . ' 2>/dev/null;';
+		if (strpos($request, '.php') !== false) {
+			$cmd .= 'php ' . $request;
+		} elseif (strpos($request, '.rb') !== false) {
+			$cmd .= 'ruby ' . $request;
+		} elseif (strpos($request, '.py') !== false) {
+			$cmd .= 'python ' . $request;
+		} elseif (strpos($request, '.pl') !== false) {
+			$cmd .= 'perl ' . $request;
+		} else {
+			$cmd .= $request;
+		}
+	    $shell = new com_shell($cmd . ' 2>&1');
+	    return trim($shell->exec());
+	}
+	
 	/*     * **********************Getteur Setteur*************************** */
 }
